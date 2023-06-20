@@ -1,0 +1,1 @@
+"""The Apart integration."""

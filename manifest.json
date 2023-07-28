@@ -5,9 +5,10 @@
   "documentation": "https://github.com/adamxp12/apart_concept_ha",
   "issue_tracker": "https://github.com/adamxp12/apart_conecpt_ha/issues",
   "integration_type": "device",
-  "domain": "apart_concept_ha",
+  "domain": "apart_concept",
   "iot_class": "local_polling",
   "name": "Apart Concept",
   "requirements": ["apart_concept==1.0.0"],
   "version": "1.0.0"
 }
+

@@ -1,0 +1,18 @@
+{
+  "services": {
+    "set_source_name": {
+      "name": "Set source name",
+      "description": "Sets the mode of the speaker.",
+      "fields": {
+        "sourceid": {
+          "name": "Source ID",
+          "description": "Source ID"
+        },
+        "sourcename": {
+          "name": "Sourcename",
+          "description": "Source Name"
+        }
+      }
+    }
+  }
+}

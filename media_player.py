@@ -29,7 +29,8 @@ from .const import (
 )
 
 from homeassistant.core import HomeAssistant, ServiceCall
-import homeassistant.helpers.config_validation as cv
+#import homeassistant.helpers.config_validation as cv
+from homeassistant.helpers import config_validation as cv, entity_platform, service
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 from homeassistant.helpers.entity import DeviceInfo
@@ -51,6 +52,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     }
 )
 
+SERVICE_SET_SOURCENAME = "set_source_name"
 
 # async def async_setup_entry(
 #     hass: HomeAssistant,
@@ -66,30 +68,51 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 
 async def async_setup_entry(hass, entry):
     """Set up the media player platform."""
+    
     sourceidlist = {"A", "B", "C", "D"}
     platform = entity_platform.async_get_current_platform()
+
 
     # This will call Entity.set_sleep_timer(sleep_time=VALUE)
     platform.async_register_entity_service(
         SERVICE_SET_SOURCENAME,
         {
             vol.Required('sourceid'): vol.In(["A", "B", "C", "D"]),
+
             vol.Required('sourcename'): cv.string
         },
         "set_source_name",
     )
 
-def setup_platform(
+
+async def async_setup_platform(
     hass: HomeAssistant,
     config: ConfigType,
-    add_entities: AddEntitiesCallback,
+    async_add_entities: Callable,
     discovery_info: DiscoveryInfoType | None = None,
 ) -> None:
+    if DOMAIN not in hass.data:
+        hass.data[DOMAIN] = {}
+
     """Connect"""
     url = config[CONF_URL]
     name = config[CONF_NAME]
+    platform = entity_platform.EntityPlatform(hass=hass, logger=_LOGGER, domain=DOMAIN, platform_name="apart_concept", platform=None, scan_interval=3, entity_namespace="media_player")
+
+    platform.async_register_entity_service(
+        SERVICE_SET_SOURCENAME,
+        {
+            vol.Required('sourceid'): vol.In(["A", "B", "C", "D"]),
+
+            vol.Required('sourcename'): cv.string
+        },
+        "set_source_name",
+    )
+    media_player = ApartMedia(url, name);
     
-    add_entities([ApartMedia(url, name)], True)
+    hass.data[DOMAIN][url] = media_player
+    async_add_entities([media_player], True)
+
 
 
 
@@ -200,9 +223,10 @@ class ApartMedia(MediaPlayerEntity):
         self._apart.set_volume(volume*100)  
 
     def set_source_name(self, sourceid, sourcename):
+        #_LOGGER.warning("Calling service_speed_up")
         # TODO: Check if sourceid is A B C D somehow its midnight I dunno how to do that
-        self._source_names[sourceid] = sourcename;
-        self._apart.set_source_name(souceid, sourcename);
+        #self._source_names[sourceid] = sourcename;
+        self._apart.set_source_name(sourceid, sourcename);
 
 
     def turn_on(self):
@@ -214,3 +238,4 @@ class ApartMedia(MediaPlayerEntity):
         """Turn the media player off."""
         self._state = STATE_OFF
         self._apart.set_power(False)
+

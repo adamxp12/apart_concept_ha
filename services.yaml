@@ -1,0 +1,19 @@
+set_source_name:
+  target:
+    entity:
+      integration: apart_concept
+      domain: media_player
+  fields:
+    sourceid:
+      required: true
+      selector:
+        select:
+          options:
+            - "A"
+            - "B"
+            - "C"
+            - "D"
+    sourcename:
+      required: true
+      selector:
+        text:

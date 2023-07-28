@@ -30,6 +30,7 @@ from .const import (
 
 from homeassistant.core import HomeAssistant, ServiceCall
 #import homeassistant.helpers.config_validation as cv
+from homeassistant.exceptions import PlatformNotReady
 from homeassistant.helpers import config_validation as cv, entity_platform, service
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
@@ -97,7 +98,8 @@ async def async_setup_platform(
     """Connect"""
     url = config[CONF_URL]
     name = config[CONF_NAME]
-    platform = entity_platform.EntityPlatform(hass=hass, logger=_LOGGER, domain=DOMAIN, platform_name="apart_concept", platform=None, scan_interval=3, entity_namespace="media_player")
+    #platform = entity_platform.EntityPlatform(hass=hass, logger=_LOGGER, domain=DOMAIN, platform_name="apart_concept", platform=None, scan_interval=3, entity_namespace="media_player")
+    platform = entity_platform.async_get_current_platform()
 
     platform.async_register_entity_service(
         SERVICE_SET_SOURCENAME,
